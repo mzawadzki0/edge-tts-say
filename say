@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# TTS parameters
+VOICE='en-US-AvaNeural'
+RATE='+10%'
+
+# where to store self PID
+PID_FILE='/tmp/edge_tts_pid'
+
+
+set -e
+trap "rm -f $PID_FILE" EXIT
+
+# stop running instance if any
+if [ -e "$PID_FILE" ]; then
+    pkill -P -SIGINT `cat $PID_FILE`
+    rm $PID_FILE
+fi
+
+if [ $# -eq 0 ]; then
+    # check whether clipboard content is text-like
+    if wl-paste -l | grep -q 'text\|TEXT'; then
+        TEXT="`wl-paste`"
+    else
+        notify-send 'say' "No text context in the clipboard."
+        exit 1
+    fi
+else
+    TEXT="$@"
+fi
+
+echo $$ > $PID_FILE
+edge-tts -v $VOICE --rate $RATE -t "$TEXT" | ffmpeg -loglevel error -i pipe:0 -f wav - | pw-cat --rate 24000 --channels 1 -p -
