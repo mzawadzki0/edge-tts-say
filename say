@@ -22,7 +22,7 @@ if [ $# -eq 0 ]; then
     if wl-paste -l | grep -q 'text\|TEXT'; then
         TEXT="`wl-paste`"
     else
-        notify-send 'say' "No text context in the clipboard."
+        notify-send 'say' "No text content in the clipboard."
         exit 1
     fi
 else
