@@ -30,4 +30,4 @@ else
 fi
 
 echo $$ > $PID_FILE
-edge-tts -v $VOICE --rate $RATE -t "$TEXT" | ffmpeg -loglevel error -i pipe:0 -f pulse -buffer_size 64 -
+edge-tts -v $VOICE --rate $RATE -t "$TEXT" | ffmpeg -loglevel error -i pipe:0 -f wav - | aplay -
